@@ -7,15 +7,27 @@ public interface ITurnObj
     public void Invoke();
 }
 
+public interface Observer
+{
+    public void Update();
+}
+
 public interface UnitType
 {
-    public void Execute();
+    public void Invoke();
 }
 
 public interface IAttack : UnitType
 {
 
 }
+
+public interface IMove : UnitType
+{
+
+}
+
+
 
 #region //Factory∆–≈œ
 public interface IProduct

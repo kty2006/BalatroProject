@@ -1,9 +1,9 @@
 using System;
 using UnityEngine;
 
-public class UnitTurnSystem : ITurnObj
+public class UnitTurnSystem : ITurnObj, IEvent
 {
-    public Action TurnAction;
+    private Action TurnAction;
     public bool isMyTurn = false;
     public void Invoke()
     {
@@ -26,8 +26,22 @@ public class UnitTurnSystem : ITurnObj
         return isMyTurn = true;
     }
 
-    public virtual void TurnActionFun()
-    {
 
+    public UnitTurnSystem ActionSetting(UnitType unitType) //빌더 패턴으로 개발 --플레이대상 -> 행동 -> 버프 ㄷㄷ
+    {
+        Register(unitType.Invoke);
+        Debug.Log("등로ㅓㄱ");
+        return this;
+    }
+    public UnitTurnSystem SettingEnd<TurnTarget>(UnitTurnSystem turnTarget)
+    {
+        Local.EventHandler.Register<TurnTarget>((Pu) => { Local.TurnSystem.Register(turnTarget);});
+        Debug.Log("등로ㅓㄱ2");
+        return this;
+    }
+
+    public void Execute()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.PackageManager;
 using UnityEngine;
 
-public class EventHandler 
+public class EventHandler
 {
     private readonly Dictionary<Type, EventContainer> GameEvents = new(); //직접 이벤트를 사용하기 위한 자료구조
 
@@ -12,7 +12,7 @@ public class EventHandler
         if (!GameEvents.ContainsKey(typeof(TEvent)))
         {
             GameEvents.Add(typeof(TEvent), new EventContainer());
-            
+
         }
         GameEvents[typeof(TEvent)].Register(new EventWrapper<TEvent>(onEvent));
     }
@@ -24,20 +24,20 @@ public class EventHandler
         }
     }
 
-    public TEvent Invoke<TEvent>(TEvent ev) where TEvent : IEvent
+    public void Invoke<TEvent>(TEvent ev) where TEvent : IEvent
     {
         if (!GameEvents.ContainsKey(typeof(TEvent)))
         {
             Debug.LogError($"[EventHandler] NotRegisterEvent {nameof(TEvent)}");
-            return ev;
+            return;
         }
         GameEvents[typeof(TEvent)].Invoke(ev);
-        return ev;
+        Debug.Log("실행");
     }
 }
 public class EventContainer
 {
-    public HashSet<EventWrapper> EventWrapperSet =new(); //Action을 담기 위핸 자료구조(Action 반환값이 제네릭이기에 액션 자체적으로 여러 함수를 담을수 없음)
+    public HashSet<EventWrapper> EventWrapperSet = new(); //Action을 담기 위핸 자료구조(Action 반환값이 제네릭이기에 액션 자체적으로 여러 함수를 담을수 없음)
 
     public void Register<TEvent>(EventWrapper<TEvent> eventWrapper)
     {
@@ -84,6 +84,7 @@ public class EventWrapper<TEvent> : EventWrapper //  원하는 매개변수로 받을수 있
     public override void Invoke(IEvent ev)
     {
         GameEvent?.Invoke((TEvent)ev);
+        Debug.Log(GameEvent);
     }
 
     public EventWrapper(Action<TEvent> ev)
@@ -95,7 +96,11 @@ public class EventWrapper<TEvent> : EventWrapper //  원하는 매개변수로 받을수 있
 
 public abstract class Event : IEvent
 {
-    public abstract void Execute();
+    public void Execute()
+    {
+        throw new NotImplementedException();
+    }
+
 }
 public abstract class Event<TEvent>
 {

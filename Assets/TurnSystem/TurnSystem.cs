@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 public class TurnSystem
 {
@@ -11,8 +12,14 @@ public class TurnSystem
         Turn.Add(turn);
     }
 
+    public void UnRegister() //
+    {
+       Turn.Remove(Turn.FirstOrDefault<ITurnObj>());
+    }
+
     public async UniTask Invoke() //
     {
+        Debug.Log(Turn.Count);
         for (int i = 0; i < Turn.Count; i++)
         {
             Turn[i].Invoke();
@@ -21,9 +28,4 @@ public class TurnSystem
         Turn.Clear();
     }
 
-    public void TurnSetting(UnitTurnSystem turnSystem) //빌더 패턴으로 개발 --플레이대상 -> 행동 -> 버프 ㄷㄷ
-    {
-        turnSystem.Register(unitType.Execute);
-        Local.EventHandler.Register<PlayerTurnSystem>((Pu) => { Local.TurnSystem.Register(turnSystem); });
-    }
 }
