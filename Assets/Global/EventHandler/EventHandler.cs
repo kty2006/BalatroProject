@@ -32,7 +32,6 @@ public class EventHandler
             return;
         }
         GameEvents[typeof(TEvent)].Invoke(ev);
-        Debug.Log("실행");
     }
 }
 public class EventContainer
@@ -84,7 +83,6 @@ public class EventWrapper<TEvent> : EventWrapper //  원하는 매개변수로 받을수 있
     public override void Invoke(IEvent ev)
     {
         GameEvent?.Invoke((TEvent)ev);
-        Debug.Log(GameEvent);
     }
 
     public EventWrapper(Action<TEvent> ev)

@@ -4,28 +4,36 @@ using System.Linq;
 using UnityEngine;
 public class TurnSystem
 {
-    private List<ITurnObj> Turn = new(); //
+    private List<ITurnObj> turns = new(); //턴을 가지고 있는 리스트
+    private bool turnproress = false;
     public UnitType unitType;
 
-    public void Register(ITurnObj turn) //
+    public void Register(ITurnObj turn) //턴 할당
     {
-        Turn.Add(turn);
+        turns.Add(turn);
     }
 
-    public void UnRegister() //
+    public void UnRegister() //턴 해제
     {
-       Turn.Remove(Turn.FirstOrDefault<ITurnObj>());
+        turns.Remove(turns.FirstOrDefault<ITurnObj>());
     }
 
-    public async UniTask Invoke() //
+    public bool TurnStart(bool turnstart)//
     {
-        Debug.Log(Turn.Count);
-        for (int i = 0; i < Turn.Count; i++)
+        return turnproress = turnstart;
+    }
+
+    public async UniTask Invoke() //턴 실행
+    {
+        for (int i = 0; i < turns.Count; i++)
         {
-            Turn[i].Invoke();
-            await UniTask.WaitUntil(() => true);
+            Debug.Log(turns[i].ToString());
+            await UniTask.WaitUntil(() => turnproress);
+            turns[i].Invoke();
+            TurnStart(false);
         }
-        Turn.Clear();
+        turns.Clear();
+        Debug.Log("턴 종료");
     }
 
 }

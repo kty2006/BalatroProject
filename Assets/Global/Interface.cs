@@ -4,7 +4,7 @@ public interface IEvent
 }
 public interface ITurnObj
 {
-    public void Invoke();
+    public bool Invoke();
 }
 
 public interface Observer

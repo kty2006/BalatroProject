@@ -1,43 +1,56 @@
 using System;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
-public class UnitTurnSystem : ITurnObj, IEvent
+public class UnitTurnSystem : MonoBehaviour, ITurnObj, IEvent
 {
-    private Action TurnAction;
-    public bool isMyTurn = false;
-    public void Invoke()
+    protected Action[] TurnAction;//턴 마다 실행할 액션
+
+    public virtual void Start()
     {
-        TurnAction?.Invoke();
-        EndTurn();
+        Local.TurnSystem.Register(this);
     }
 
-    public void Register(Action action)
+    public bool Invoke()//액션 실행
     {
-        TurnAction += action;
+        for (int i = 0; i < TurnAction.Length; i++)
+        {
+            if (TurnAction[i] != null)
+            {
+                TurnAction[i]?.Invoke();
+            }
+        }
+        return true;
     }
 
-    public void UnRegister(Action action)
+    public void Register(UnitType unitType)//액션 할당
     {
-        TurnAction -= action;
+        for (int i = 0; i < TurnAction.Length; i++)
+        {
+            if (TurnAction[i] == null)
+            {
+                TurnAction[i] += unitType.Invoke;
+                return;
+            }
+        }
+        Debug.LogError($"[UnitTurnSystem] TurnActionOverflow {nameof(TurnAction)}");
     }
 
-    public bool EndTurn()
+    public void UnRegister(UnitType unitType)//액션 해제
     {
-        return isMyTurn = true;
+        for (int i = 0; i < TurnAction.Length; i++)
+        {
+            if (TurnAction[i] == null)
+            {
+                TurnAction[i] -= unitType.Invoke;
+                return;
+            }
+        }
     }
 
-
-    public UnitTurnSystem ActionSetting(UnitType unitType) //빌더 패턴으로 개발 --플레이대상 -> 행동 -> 버프 ㄷㄷ
+    public void SetTurnLength(int Length)//각턴에 실행할 액션 개수 설정
     {
-        Register(unitType.Invoke);
-        Debug.Log("등로ㅓㄱ");
-        return this;
-    }
-    public UnitTurnSystem SettingEnd<TurnTarget>(UnitTurnSystem turnTarget)
-    {
-        Local.EventHandler.Register<TurnTarget>((Pu) => { Local.TurnSystem.Register(turnTarget);});
-        Debug.Log("등로ㅓㄱ2");
-        return this;
+        TurnAction = new Action[Length];
     }
 
     public void Execute()
