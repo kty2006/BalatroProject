@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.InputSystem;
 
 public class ObserverManager : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class ObserverManager : MonoBehaviour
             observer.Update();
         }
     }
+
 }
 
 
