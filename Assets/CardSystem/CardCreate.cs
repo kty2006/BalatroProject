@@ -4,17 +4,21 @@ using UnityEngine.UI;
 public class CardCreate : MonoBehaviour
 {
     public CardsData CardsData;
-    public Canvas canvas;
+    public GameObject cards;
     public GameObject CardPrefab;
+    private int number;
 
-    public void Start()
-    {
-    }
     [ContextMenu("CardCreate")]
-    public void CreateCards(/*int count*/)
+    public void CreateCards(int count)
     {
-        GameObject cardObject = Instantiate(CardPrefab, canvas.transform);
-        cardObject.transform.GetChild(0).GetComponent<Image>().sprite = CardsData.PlayingCards[0];
-        CardsData.Cards.Add(new CardBuild().Image(cardObject.GetComponent<Image>()).Number(1).Type(CardType.Heart).Build());
+        for (int i = 0; i < count; i++)
+        {
+            GameObject cardObject = Instantiate(CardPrefab, cards.transform);
+            number = Random.Range(0, 51);
+            cardObject.transform.GetChild(0).GetComponent<Image>().sprite = CardsData.PlayingCards[number];
+            CardsData.CardsAdd(new CardBuild().Image(cardObject.GetComponent<Image>()).Number(number).Type().Build());
+            if (i != 0)
+                CardsData.CardGet(i).CardSpacing(i);
+        }
     }
 }

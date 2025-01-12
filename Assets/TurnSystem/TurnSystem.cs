@@ -27,7 +27,6 @@ public class TurnSystem
     {
         for (int i = 0; i < turns.Count; i++)
         {
-            Debug.Log(turns[i].ToString());
             await UniTask.WaitUntil(() => turnproress);
             turns[i].Invoke();
             TurnStart(false);

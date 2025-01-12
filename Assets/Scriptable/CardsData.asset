@@ -83,5 +83,11 @@ MonoBehaviour:
   - {fileID: -1699585220, guid: cb4a55571169f0441ac05153d7d583f9, type: 3}
   - {fileID: -738549462, guid: cb4a55571169f0441ac05153d7d583f9, type: 3}
   - {fileID: -1340628006, guid: cb4a55571169f0441ac05153d7d583f9, type: 3}
+  Cards:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   CardsImageName: Playing Cards
   CardBackImageName: Card Backs Enhancers

@@ -1,21 +1,49 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public enum CardType { Heart, Clover, Diamond, Spade }
-public class Card 
+public enum CardState { None, Drow }
+public class Card : MonoBehaviour
 {
-    public Image Image;//이미지
-    public int Number;//숫자
-    public CardType Type;//타입
+    private Image image;//이미지
+    private int number;//숫자
+    private CardType type;//타입
+    private CardState state = CardState.None;
+    private int spacing = 150;
     //추가능력
 
     public Card(Image image, int number, CardType type)
     {
-        Image = image;
-        Number = number;
-        Type = type;
+        this.image = image;
+        this.number = number;
+        this.type = type;
     }
 
+    public void CardSpacing(float count)
+    {
+        image.rectTransform.localPosition = new Vector3(count * spacing, 0, 0);
+    }
+
+    public Image Image()
+    {
+        return image;
+    }
+
+    public CardType Type()
+    {
+        return type;
+    }
+
+    public int Number()
+    {
+        return number;
+    }
+
+    public CardState State()
+    {
+        return state = (state == CardState.None) ? CardState.Drow : CardState.None;
+    }
 }
 
 public class CardBuild
@@ -36,9 +64,23 @@ public class CardBuild
         return this;
     }
 
-    public CardBuild Type(CardType type)
+    public CardBuild Type()
     {
-        this.type = type;
+        switch (number)
+        {
+            case <= 12:
+                type = CardType.Heart;
+                break;
+            case <= 25:
+                type = CardType.Clover;
+                break;
+            case <= 38:
+                type = CardType.Diamond;
+                break;
+            case <= 51:
+                type = CardType.Spade;
+                break;
+        }
         return this;
     }
 
