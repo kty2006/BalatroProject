@@ -12,17 +12,17 @@ public interface Observer
     public void Update();
 }
 
-public interface UnitType
+public interface UnitBehaviour
 {
     public void Invoke();
 }
 
-public interface IAttack : UnitType
+public interface IAttack : UnitBehaviour
 {
 
 }
 
-public interface IMove : UnitType
+public interface IMove : UnitBehaviour
 {
 
 }

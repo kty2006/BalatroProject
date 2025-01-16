@@ -6,7 +6,7 @@ public class TurnSystem
 {
     private List<ITurnObj> turns = new(); //턴을 가지고 있는 리스트
     private bool turnproress = false;
-    public UnitType unitType;
+    public UnitBehaviour unitType;
 
     public void Register(ITurnObj turn) //턴 할당
     {

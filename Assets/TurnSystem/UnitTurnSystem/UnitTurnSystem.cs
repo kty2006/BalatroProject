@@ -23,7 +23,7 @@ public class UnitTurnSystem : MonoBehaviour, ITurnObj, IEvent
         return true;
     }
 
-    public void Register(UnitType unitType)//액션 할당
+    public void Register(UnitBehaviour unitType)//액션 할당
     {
         for (int i = 0; i < TurnAction.Length; i++)
         {
@@ -36,7 +36,7 @@ public class UnitTurnSystem : MonoBehaviour, ITurnObj, IEvent
         Debug.LogError($"[UnitTurnSystem] TurnActionOverflow {nameof(TurnAction)}");
     }
 
-    public void UnRegister(UnitType unitType)//액션 해제
+    public void UnRegister(UnitBehaviour unitType)//액션 해제
     {
         for (int i = 0; i < TurnAction.Length; i++)
         {
