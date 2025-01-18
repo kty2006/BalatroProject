@@ -26,7 +26,6 @@ public class Card
         this.cardClass = cardClass;
     }
 
-
     public Image Image()
     {
         return image;
@@ -90,7 +89,7 @@ public class CardBuild
                 break;
             case <= 51:
                 this.sumNumber = (number != 51) ? Mathf.Clamp((number + 2) - 39, 2, 10) : 11;
-                groupNumber = number - 38;
+                groupNumber = number - 39;
                 break;
         }
         return this;

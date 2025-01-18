@@ -2397,19 +2397,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2115753061}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 828141546884134994}
-        m_TargetAssemblyTypeName: CardManager, Assembly-CSharp
-        m_MethodName: CardDrow
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &2115753061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2482,6 +2470,7 @@ MonoBehaviour:
   InGameData: {fileID: 11400000, guid: 2dbe4ba862449ce4e9098a09bffc422a, type: 2}
   cards: {fileID: 776506630613134773}
   cardPrefab: {fileID: 1702420063539619391, guid: 7794e350035b55949a6604c616998cd2, type: 3}
+  DrowButton: {fileID: 2115753060}
 --- !u!114 &2462407839891139424
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -11,6 +11,11 @@ public class Answersheet : MonoBehaviour
     private int maxCardCount = 5;
     public void Start()
     {
+        Set();
+    }
+
+    public void Set()
+    {
         markSheet.Enqueue(StraighFlush);
         markSheet.Enqueue(FourCard);
         markSheet.Enqueue(FullHouse);
@@ -20,25 +25,25 @@ public class Answersheet : MonoBehaviour
         markSheet.Enqueue(TwoPair);
         markSheet.Enqueue(Pair);
     }
-
     public void MarkingTest()
     {
         SortCards = Sort(GameData.DeckData());
-
+        foreach (var item in SortCards)
+        {
+            Debug.Log(item.GroupNumber());
+        }
         SameCards = Same(SortCards);
         for (int i = 0; i < 8; i++)
         {
             if (markSheet.Dequeue().Invoke())
             {
-                Debug.Log("끝");
                 break;
             }
         }
     }
-
     public bool StraighFlush()
     {
-        if (Straight() == true && Flush() == true)
+        if (Straight() && Flush())
         { Debug.Log("스트레이트플러시"); return true; }
         return false;
     }
@@ -97,16 +102,15 @@ public class Answersheet : MonoBehaviour
     }
     public bool TwoPair()
     {
-        int checkCard = 15;
+        HashSet<int> checkCard = new();
         int checkCount = 0;
-        for (int i = 0; i < SortCards.Count - 1; i++)
+        for (int i = 0; i <= SortCards.Count - 1; i++)
         {
-            if (SameCards.ContainsKey(SortCards[i].GroupNumber()) && SortCards[i].GroupNumber()
-                != checkCard && SameCards[SortCards[i].GroupNumber()] == 2)
+            if (SameCards.ContainsKey(SortCards[i].GroupNumber()) && !checkCard.Contains(SortCards[i].GroupNumber()) && SameCards[SortCards[i].GroupNumber()] == 2)
             {
-                checkCard = SortCards[i].GroupNumber();
+                checkCard.Add(SortCards[i].GroupNumber());
                 checkCount++;
-                if (checkCard == 2)
+                if (checkCard.Count == 2)
                 { Debug.Log("투페어"); return true; }
             }
         }
@@ -138,11 +142,15 @@ public class Answersheet : MonoBehaviour
     {
         for (int i = 0; i < deck.Count - 1; i++)
         {
-            for (int j = 1; j <= deck.Count - 1; j++)
+            for (int j = i+1; j <= deck.Count - 1; j++)
             {
-                if (deck[i].GroupNumber() > deck[j].GroupNumber())
+                if (deck[i].GroupNumber() >= deck[j].GroupNumber())
                 {
-                    (deck[i], deck[j]) = (deck[j], deck[i]);
+                    Card sub = deck[i];
+                    deck[i] = deck[j];
+                    deck[j] = sub;
+                    Debug.Log(sub.GroupNumber() + ":" + deck[i].GroupNumber());
+                    //(deck[i], deck[j]) = (deck[j], deck[i]);
                 }
             }
         }
@@ -152,35 +160,27 @@ public class Answersheet : MonoBehaviour
     public Dictionary<int, int> Same(List<Card> deck)
     {
         Dictionary<int, int> sameCardCount = new();
+        HashSet<int> checkCard = new();
         for (int i = 0; i < deck.Count - 1; i++)
         {
-            Debug.Log(deck[i].GroupNumber()+ " : "+ deck[i+1].GroupNumber());
-            if (deck[i].GroupNumber() == deck[i + 1].GroupNumber())
+            for (int j = i + 1; j <= deck.Count - 1; j++)
             {
-                if (!sameCardCount.ContainsKey(deck[i].GroupNumber()))
+                if (!checkCard.Contains(deck[i].GroupNumber()) && deck[i].GroupNumber() == deck[j].GroupNumber())
                 {
-                    Debug.Log("등록");
-                    sameCardCount.Add(deck[i].GroupNumber(), 2);
-                }
-                else
-                {
-                    sameCardCount[deck[i].GroupNumber()]++;
+                    if (!sameCardCount.ContainsKey(deck[i].GroupNumber()))
+                    {
+                        Debug.Log("등록");
+                        sameCardCount.Add(deck[i].GroupNumber(), 2);
+                    }
+                    else
+                    {
+                        Debug.Log("추가");
+                        sameCardCount[deck[i].GroupNumber()]++;
+                    }
                 }
             }
+            checkCard.Add(deck[i].GroupNumber());
         }
         return sameCardCount;
     }
-
-    //플러시
-    //스트레이트
-    //스트레이트플러시
-
-    //투페어
-    //풀하우스
-
-    //SameCard
-    //포카드
-    //트리플
-    //페어
-    //하이카드
 }

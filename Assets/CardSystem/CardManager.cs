@@ -9,16 +9,35 @@ public class CardManager : MonoBehaviour, IPointerExitHandler, IPointerClickHand
     public InGameData InGameData;
     public GameObject cards;
     public GameObject cardPrefab;
-    private int number;
+
+    public Button DrowButton;
     public void Start()
     {
         InGameData.SettingDack();
-        CreateCards(5);
+        CreateCards(CardsData.PlayingCards.Length);
+        CardDrow(5);
+        DrowButton.onClick.AddListener(() => CardDrow(InGameData.DeckAllReMove()));
     }
 
-    public void CardDrow()//오브젝트풀링으로 고쳐야함
+    public void CardDrow(int count)//오브젝트풀링으로 고쳐야함
     {
-        CreateCards(InGameData.DeckAllReMove());
+        int num = 0;
+        int currentCount = count;
+        for (int i = 0; i < currentCount; i++)
+        {
+            num = Random.Range(0, 52);
+            if (InGameData.CardDBContains(num))
+            {
+                GameObject cardObject = Instantiate(cardPrefab, cards.transform);
+                cardObject.transform.GetChild(0).GetComponent<Image>().sprite = CardsData.PlayingCards[num]; //캡슐화 해야함***
+                InGameData.CardsAdd(new CardBuild().Image(cardObject.GetComponent<Image>()).Number(num).Type(num).Class(num).Build());
+                InGameData.CardDBReMove(num);
+            }
+            else
+            {
+                Mathf.Clamp(currentCount++, 1, 10);//
+            }
+        }
     }
 
     [ContextMenu("CardCreate")]
@@ -26,10 +45,7 @@ public class CardManager : MonoBehaviour, IPointerExitHandler, IPointerClickHand
     {
         for (int i = 0; i < count; i++)
         {
-            GameObject cardObject = Instantiate(cardPrefab, cards.transform);
-            number = Random.Range(0, 51);
-            cardObject.transform.GetChild(0).GetComponent<Image>().sprite = CardsData.PlayingCards[number];
-            InGameData.CardsAdd(new CardBuild().Image(cardObject.GetComponent<Image>()).Number(number).Type(number).Class(number).Build());
+            InGameData.CardDBAdd(i);
         }
     }
 
@@ -44,6 +60,7 @@ public class CardManager : MonoBehaviour, IPointerExitHandler, IPointerClickHand
             {
                 clickedObject.transform.localPosition += Vector3.up * 100;//하드코딩***
                 InGameData.DeckAdd(card, clickedObject);
+                //Debug.Log(card.GroupNumber());
             }
             else
             {

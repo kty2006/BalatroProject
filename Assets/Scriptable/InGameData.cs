@@ -8,6 +8,7 @@ public class InGameData : ScriptableObject
     [SerializeField] private List<Card> randomCardList = new();
     [SerializeField] private List<Card> deckData = new();
     [SerializeField] private List<GameObject> deckUi = new();
+    [SerializeField] private Dictionary<int, int> cardDB = new();
 
     #region RandomCardList
     public Card FindCard(Image obj)
@@ -33,7 +34,7 @@ public class InGameData : ScriptableObject
     }
     #endregion
 
-    #region deck
+    #region Deck
     public List<Card> DeckData()
     { return deckData; }
     public void DeckAdd(Card card, GameObject cardUI)
@@ -71,6 +72,24 @@ public class InGameData : ScriptableObject
         deckData.Clear();
         deckUi.Clear();
         return count;
+    }
+    #endregion
+
+    #region CardDB
+    public void CardDBAdd(int num)
+    {
+        cardDB.Add(num, 1);
+    }
+
+    public void CardDBReMove(int num)
+    {
+        if (cardDB[num] > 0)
+            cardDB[num] -= 1;
+    }
+    public bool CardDBContains(int num)
+    {
+        if (cardDB[num] == 0) return false;
+        return true;
     }
     #endregion
     public void SettingDack()
