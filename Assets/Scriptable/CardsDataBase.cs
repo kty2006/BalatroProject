@@ -6,9 +6,9 @@ using UnityEngine.UI;
 [CreateAssetMenu(fileName = "CardsDataBase", menuName = "Scriptable Objects/CardsDataBase")]
 public class CardsDataBase : ScriptableObject
 {
-    public Sprite[] CardBacks;
-    public Sprite[] PlayingCards;
-    
+    public Sprite[] CardBacks; //Ä¸½¶È­**
+    public Sprite[] PlayingCards;//Ä¸½¶È­**
+
     public string CardsImageName;
     public string CardBackImageName;
 
@@ -24,5 +24,5 @@ public class CardsDataBase : ScriptableObject
         CardBacks = Resources.LoadAll<Sprite>(CardBackImageName);
     }
 
-    
+
 }

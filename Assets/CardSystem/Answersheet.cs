@@ -9,6 +9,8 @@ public class Answersheet : MonoBehaviour
     private Dictionary<int, int> SameCards;
     private Queue<Func<bool>> markSheet = new();
     private int maxCardCount = 5;
+    private Stack<Action> lastAction = new();
+    //private Action lastAction;
     public void Start()
     {
         Set();
@@ -28,15 +30,16 @@ public class Answersheet : MonoBehaviour
     public void MarkingTest()
     {
         SortCards = Sort(GameData.DeckData());
-        foreach (var item in SortCards)
-        {
-            Debug.Log(item.GroupNumber());
-        }
         SameCards = Same(SortCards);
         for (int i = 0; i < 8; i++)
         {
             if (markSheet.Dequeue().Invoke())
             {
+                int count = lastAction.Count;
+                for (int j = 0; j < count; j++)
+                {
+                    lastAction.Pop()?.Invoke();
+                }
                 break;
             }
         }
@@ -44,60 +47,99 @@ public class Answersheet : MonoBehaviour
     public bool StraighFlush()
     {
         if (Straight() && Flush())
-        { Debug.Log("스트레이트플러시"); return true; }
+        {
+            ReMoveLastAction(2);
+            lastAction.Push(() => Debug.Log("스트레이트플러시"));
+            lastAction.Push(() => GameData.ChipSum(100).ScoreSum(8));
+            return true;
+        }
         return false;
     }
     public bool FourCard()
     {
         if (SameCard(4))
-        { Debug.Log("포카드"); return true; }
+        {
+            lastAction.Push(() => Debug.Log("포카드"));
+            lastAction.Push(() => GameData.ChipSum(60).ScoreSum(7));
+            return true;
+        }
+        lastAction.Clear();
         return false;
     }
     public bool FullHouse()
     {
         if (SameCard(3) == true && SameCard(2) == true)
-        { Debug.Log("풀하우스"); return true; }
+        {
+            lastAction.Push(() => Debug.Log("풀하우스"));
+            lastAction.Push(() => GameData.ChipSum(40).ScoreSum(4));
+            return true;
+        }
+        lastAction.Clear();
         return false;
     }
     public bool Flush()
     {
-        if (maxCardCount == SortCards.Count)
+        int count = 1;
+        if (maxCardCount <= SortCards.Count)
         {
-            for (int i = 1; i <= SortCards.Count - 1; i++)
+            for (int i = 0; i < SortCards.Count; i++)
             {
-                if (SortCards[0].Type() != SortCards[i].Type())
+                int index = i; // 로컬 변수로 캡처
+                lastAction.Push(() => GameData.ChipSum(SortCards[index].SumNumber()));
+
+                if (i > 0)
                 {
-                    return false;
+                    count++;
+                    if (SortCards[0].Type() != SortCards[i].Type())
+                    {
+                        return false;
+                    }
                 }
             }
-            Debug.Log("플러시");
-            return true;
+
+            if (count == maxCardCount)
+            {
+                lastAction.Push(() => Debug.Log("플러시"));
+                lastAction.Push(() => GameData.ChipSum(35).ScoreSum(4));
+                return true;
+            }
         }
+        lastAction.Clear();
         return false;
     }
+    //
     public bool Straight()
     {
-        if (maxCardCount == SortCards.Count)
+        if (maxCardCount <= SortCards.Count)
         {
-            for (int i = 0; i < SortCards.Count - 1; i++)
+            for (int i = 0; i < maxCardCount; i++)
             {
-                if ((SortCards[i].GroupNumber() + 1) != SortCards[i + 1].GroupNumber())
+                int index = i;
+                lastAction.Push(() => GameData.ChipSum(SortCards[index].SumNumber()));
+                if (i < 4)
                 {
-                    return false;
+                    if ((SortCards[i].GroupNumber() + 1) != SortCards[i + 1].GroupNumber())
+                    {
+                        return false;
+                    }
                 }
             }
-            Debug.Log("스트레이트");
+            lastAction.Push(() => Debug.Log("스트레이트"));
+            lastAction.Push(() => GameData.ChipSum(30).ScoreSum(4));
             return true;
         }
+        lastAction.Clear();
         return false;
     }
     public bool Triple()
     {
         if (SameCard(3))
         {
-            Debug.Log("트리플");
+            lastAction.Push(() => Debug.Log("트리플"));
+            lastAction.Push(() => GameData.ChipSum(30).ScoreSum(3));
             return true;
         }
+        lastAction.Clear();
         return false;
     }
     public bool TwoPair()
@@ -111,18 +153,26 @@ public class Answersheet : MonoBehaviour
                 checkCard.Add(SortCards[i].GroupNumber());
                 checkCount++;
                 if (checkCard.Count == 2)
-                { Debug.Log("투페어"); return true; }
+                {
+                    lastAction.Push(() => GameData.ChipSum(SortCards[i].SumNumber() * 2));
+                    lastAction.Push(() => Debug.Log("투페어"));
+                    lastAction.Push(() => GameData.ChipSum(20).ScoreSum(2));
+                    return true;
+                }
             }
         }
+        lastAction.Clear();
         return false;
     }
     public bool Pair()
     {
         if (SameCard(2))
         {
-            Debug.Log("페어");
+            lastAction.Push(() => Debug.Log("페어"));
+            lastAction.Push(() => GameData.ChipSum(10).ScoreSum(2));
             return true;
         }
+        lastAction.Clear();
         return false;
     }
 
@@ -132,6 +182,7 @@ public class Answersheet : MonoBehaviour
         {
             if (SameCards.ContainsKey(SortCards[i].GroupNumber()) && SameCards[SortCards[i].GroupNumber()] == count)
             {
+                lastAction.Push(() => GameData.ChipSum(SortCards[i].SumNumber() * count));
                 return true;
             }
         }
@@ -142,15 +193,13 @@ public class Answersheet : MonoBehaviour
     {
         for (int i = 0; i < deck.Count - 1; i++)
         {
-            for (int j = i+1; j <= deck.Count - 1; j++)
+            for (int j = i + 1; j <= deck.Count - 1; j++)
             {
                 if (deck[i].GroupNumber() >= deck[j].GroupNumber())
                 {
                     Card sub = deck[i];
                     deck[i] = deck[j];
                     deck[j] = sub;
-                    Debug.Log(sub.GroupNumber() + ":" + deck[i].GroupNumber());
-                    //(deck[i], deck[j]) = (deck[j], deck[i]);
                 }
             }
         }
@@ -169,12 +218,10 @@ public class Answersheet : MonoBehaviour
                 {
                     if (!sameCardCount.ContainsKey(deck[i].GroupNumber()))
                     {
-                        Debug.Log("등록");
                         sameCardCount.Add(deck[i].GroupNumber(), 2);
                     }
                     else
                     {
-                        Debug.Log("추가");
                         sameCardCount[deck[i].GroupNumber()]++;
                     }
                 }
@@ -183,4 +230,13 @@ public class Answersheet : MonoBehaviour
         }
         return sameCardCount;
     }
+
+    public void ReMoveLastAction(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            lastAction.Pop();
+        }
+    }
+
 }

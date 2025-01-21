@@ -5,10 +5,12 @@ using UnityEngine.UI;
 [CreateAssetMenu(fileName = "InGameData", menuName = "Scriptable Objects/InGameData")]
 public class InGameData : ScriptableObject
 {
+
     [SerializeField] private List<Card> randomCardList = new();
     [SerializeField] private List<Card> deckData = new();
     [SerializeField] private List<GameObject> deckUi = new();
     [SerializeField] private Dictionary<int, int> cardDB = new();
+    [SerializeField] private (int, int) totalChip;
 
     #region RandomCardList
     public Card FindCard(Image obj)
@@ -79,6 +81,7 @@ public class InGameData : ScriptableObject
     public void CardDBAdd(int num)
     {
         cardDB.Add(num, 1);
+
     }
 
     public void CardDBReMove(int num)
@@ -91,6 +94,39 @@ public class InGameData : ScriptableObject
         if (cardDB[num] == 0) return false;
         return true;
     }
+    #endregion
+
+    #region TotalChip
+    public InGameData ChipSum(int chip)
+    {
+        Debug.Log(chip);
+        totalChip.Item1 += chip;
+        return this;
+    }
+
+    public InGameData ChipMultipli(int chip)
+    {
+        totalChip.Item1 *= chip;
+        return this;
+    }
+
+    public InGameData ScoreSum(int chip)
+    {
+        totalChip.Item2 += chip;
+        return this;
+    }
+
+    public InGameData ScoreMultipli(int chip)
+    {
+        totalChip.Item2 *= chip;
+        return this;
+    }
+
+    public (int, int) TotalChip()
+    {
+        return totalChip;
+    }
+
     #endregion
     public void SettingDack()
     {

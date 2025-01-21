@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class CardManager : MonoBehaviour, IPointerExitHandler, IPointerClickHandler, IPointerMoveHandler
 {
@@ -10,13 +11,21 @@ public class CardManager : MonoBehaviour, IPointerExitHandler, IPointerClickHand
     public GameObject cards;
     public GameObject cardPrefab;
 
+    //분리할것
     public Button DrowButton;
+    public TextMeshProUGUI TotalChip;
+
     public void Start()
     {
         InGameData.SettingDack();
         CreateCards(CardsData.PlayingCards.Length);
         CardDrow(5);
         DrowButton.onClick.AddListener(() => CardDrow(InGameData.DeckAllReMove()));
+    }
+
+    public void Update()
+    {
+        TotalChip.text = $"{InGameData.TotalChip().Item1} : {InGameData.TotalChip().Item2}";
     }
 
     public void CardDrow(int count)//오브젝트풀링으로 고쳐야함
